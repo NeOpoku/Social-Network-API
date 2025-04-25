@@ -109,26 +109,36 @@ const thoughtController = {
 
   // Delete reaction
   async deleteReaction(req, res) {
+    const { thoughtId, reactionId } = req.params;
+    console.log('→ deleteReaction params:', { thoughtId, reactionId });
+
     try {
-      const reaction = await Thought.findOneAndUpdate(
-        { _id: req.params.thoughtId },
-        { $pull: { reactions: { _id: req.params.reactionId } } },
-        { runValidators: true, new: true }
+      const updatedThought = await Thought.findOneAndUpdate(
+        { _id: Types.ObjectId(thoughtId) },             // ensure parent ID is cast too
+        { 
+          $pull: { 
+            reactions: { reactionId: Types.ObjectId(reactionId) }  // ② cast & pull by your custom field
+          } 
+        },
+        { new: true }                                    // return the doc *after* the pull
       );
 
-      if (!reaction) {
-        return res
-          .status(404)
-          .json({ message: "Check thought and reaction ID" });
+      if (!updatedThought) {
+        console.log('→ deleteReaction: thought not found');
+        return res.status(404).json({ message: 'No thought (or reaction) with those IDs.' });
       }
 
-      return res.status(200).json(reaction);
+      console.log(
+        '→ remaining reactions:',
+        updatedThought.reactions.map(r => r.reactionId.toString())
+      );
+      return res.json(updatedThought);
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return res.status(500).json(err);
     }
   },
-};
+  };
 
 // Exports
 module.exports = thoughtController;
