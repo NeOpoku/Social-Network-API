@@ -115,14 +115,15 @@ const thoughtController = {
 
     try {
       const updatedThought = await Thought.findOneAndUpdate(
-        { _id: new Types.ObjectId(thoughtId) },             // ensure parent ID is cast too
-        { 
-          $pull: { 
-            reactions: { reactionId: new Types.ObjectId(reactionId) }  // ② cast & pull by your custom field
-          } 
+        { _id: Types.ObjectId.createFromHexString(thoughtId) },
+        {
+          $pull: {
+            reactions: { reactionId: Types.ObjectId.createFromHexString(reactionId) }
+          }
         },
-        { new: true }                                    // return the doc *after* the pull
+        { new: true }
       );
+  
 
       if (!updatedThought) {
         console.log('→ deleteReaction: thought not found');
