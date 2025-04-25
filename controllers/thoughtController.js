@@ -115,10 +115,10 @@ const thoughtController = {
 
     try {
       const updatedThought = await Thought.findOneAndUpdate(
-        { _id: newTypes.ObjectId(thoughtId) },             // ensure parent ID is cast too
+        { _id: new Types.ObjectId(thoughtId) },             // ensure parent ID is cast too
         { 
           $pull: { 
-            reactions: { reactionId: Types.ObjectId(reactionId) }  // ② cast & pull by your custom field
+            reactions: { reactionId: new Types.ObjectId(reactionId) }  // ② cast & pull by your custom field
           } 
         },
         { new: true }                                    // return the doc *after* the pull
