@@ -1,5 +1,6 @@
 // Imports
 const { User, Thought } = require("../models");
+const { Types } = require("mongoose");
 
 // Get all thoughts
 const thoughtController = {
@@ -114,7 +115,7 @@ const thoughtController = {
 
     try {
       const updatedThought = await Thought.findOneAndUpdate(
-        { _id: Types.ObjectId(thoughtId) },             // ensure parent ID is cast too
+        { _id: newTypes.ObjectId(thoughtId) },             // ensure parent ID is cast too
         { 
           $pull: { 
             reactions: { reactionId: Types.ObjectId(reactionId) }  // ② cast & pull by your custom field
